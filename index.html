@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Job‑Posting Web Scraper</title>
+  <!-- Bootstrap 5 via CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Google Fonts (optional) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .hero {
+      background: linear-gradient(135deg, #0d6efd 0%, #4e8cff 100%);
+      color: #fff;
+      padding: 6rem 0;
+      border-bottom-left-radius: 3rem;
+      border-bottom-right-radius: 3rem;
+    }
+    code {
+      background: #f6f8fa;
+      padding: 0.25rem 0.4rem;
+      border-radius: 0.25rem;
+    }
+    pre {
+      background: #f6f8fa;
+      padding: 1rem;
+      border-radius: 0.5rem;
+    }
+    footer {
+      background: #f8f9fa;
+      padding: 2rem 0;
+      margin-top: 3rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#">Job Scraper</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navMenu"
+        aria-controls="navMenu"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+          <li class="nav-item"><a class="nav-link" href="#quick-start">Quick Start</a></li>
+          <li class="nav-item"><a class="nav-link" href="#preview">Data Preview</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero text-center">
+    <div class="container">
+      <h1 class="display-4 fw-bold mb-3">Job‑Posting Web Scraper</h1>
+      <p class="lead">Scrape, analyse, and showcase hiring trends in under <strong>8 hours</strong>.</p>
+      <a href="#quick-start" class="btn btn-light btn-lg mt-3">Get Started</a>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="container py-5">
+    <div class="row text-center mb-4">
+      <div class="col">
+        <h2 class="fw-bold">Features</h2>
+        <p class="text-muted">Why you&rsquo;ll love this project</p>
+      </div>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body">
+            <h5 class="card-title fw-semibold">Keyword‑based Crawl</h5>
+            <p class="card-text">Target any role or tech stack, paginating through search results automatically.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body">
+            <h5 class="card-title fw-semibold">Fast &amp; Lightweight</h5>
+            <p class="card-text">Built with <code>requests</code> + <code>BeautifulSoup</code>; no heavy browser automation required.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body">
+            <h5 class="card-title fw-semibold">Instant Insights</h5>
+            <p class="card-text">Analyse salaries &amp; locations in a companion Jupyter Notebook.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Start -->
+  <section id="quick-start" class="container py-5">
+    <div class="row">
+      <div class="col-lg-6 mx-auto text-center">
+        <h2 class="fw-bold mb-4">Quick Start</h2>
+        <pre class="text-start"><code># Clone &amp; enter
+> git clone https://github.com/your-username/job-scraper.git
+> cd job-scraper
+
+# Install
+> pip install -r requirements.txt
+
+# Run scraper
+> python scraper.py --query "python developer" --pages 3</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Data Preview -->
+  <section id="preview" class="container py-5">
+    <div class="row text-center mb-4">
+      <div class="col">
+        <h2 class="fw-bold">Data Preview</h2>
+        <p class="text-muted">First 20 rows from <code>jobs.csv</code></p>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table id="job-table" class="table table-striped table-bordered"></table>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container text-center">
+      <p class="mb-0">© <span id="year"></span> Job Scraper • MIT License</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script>
+    // Current year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Load and display jobs.csv (first 20 rows)
+    function loadCSV() {
+      fetch('jobs.csv')
+        .then(res => res.ok ? res.text() : Promise.reject('CSV not found'))
+        .then(text => {
+          const parsed = Papa.parse(text, {header: true});
+          const rows = parsed.data.slice(0, 20);
+          const table = document.getElementById('job-table');
+
+          // Build header
+          const thead = document.createElement('thead');
+          const headRow = document.createElement('tr');
+          Object.keys(rows[0]).forEach(key => {
+            const th = document.createElement('th');
+            th.textContent = key.replace(/_/g, ' ');
+            headRow.appendChild(th);
+          });
+          thead.appendChild(headRow);
+          table.appendChild(thead);
+
+          // Build body
+          const tbody = document.createElement('tbody');
+          rows.forEach(r => {
+            const tr = document.createElement('tr');
+            Object.values(r).forEach(val => {
+              const td = document.createElement('td');
+              td.textContent = val;
+              tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+          });
+          table.appendChild(tbody);
+        })
+        .catch(err => {
+          document.getElementById('preview').innerHTML += `<p class="text-danger text-center">${err}</p>`;
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', loadCSV);
+  </script>
+</body>
+</html>

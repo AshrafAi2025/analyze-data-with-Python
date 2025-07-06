@@ -1,0 +1,5 @@
+COLUMNS = [
+    title, company, location,
+    posted_date, summary, salary,
+    url, scraped_at
+]
